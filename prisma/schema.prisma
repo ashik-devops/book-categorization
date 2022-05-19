@@ -18,4 +18,50 @@ model User {
   email        String        @unique @db.VarChar(64)
   password     String        @db.VarChar(512)
   reset_token  String?       @db.VarChar(512)
+  status       UserStatus    @default(ACTIVE)
+  created_at   DateTime      @default(dbgenerated("CURRENT_TIMESTAMP"))
+  updated_at   DateTime?
+  tokens       Token[]
+  role_id      String        @db.Uuid
+  role         Role          @relation(fields: [role_id], references: [id])
+}
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+model Role {
+  id          String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  label       String            @unique @db.VarChar(64)
+  permissions RolePermissions[]
+  users       User[]
+}
+
+model Token {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  token      String    @unique @db.Text
+  expires_at DateTime
+  revoked_at DateTime?
+  created_at DateTime  @default(dbgenerated("CURRENT_TIMESTAMP"))
+  updated_at DateTime?
+  user_id    String    @db.Uuid
+  user       User      @relation(fields: [user_id], references: [id])
+}
+model Permission {
+  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String            @db.VarChar(127)
+  entity          String            @db.VarChar(127)
+  scope           String            @default("*") @db.VarChar(127)
+  scope_attribute String            @default("*") @db.VarChar(127)
+  roles           RolePermissions[]
+}
+
+model RolePermissions {
+  role_id       String     @db.Uuid
+  role          Role       @relation(fields: [role_id], references: [id])
+  permission_id String     @db.Uuid
+  permission    Permission @relation(fields: [permission_id], references: [id])
+  assigned_at   DateTime   @default(dbgenerated("CURRENT_TIMESTAMP"))
+
+  @@id([role_id, permission_id])
 }
