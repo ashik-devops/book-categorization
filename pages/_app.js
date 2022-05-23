@@ -14,6 +14,7 @@ import {
   faUserMd,
   faPlus,
   faMinus,
+  faBookOpen,
 } from "@fortawesome/free-solid-svg-icons";
 import { faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
 import { faUserCog } from "@fortawesome/free-solid-svg-icons";
@@ -38,6 +39,7 @@ import { faAlignRight } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarDay } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
+  faBookOpen,
   faCalendarDay,
   faPlus,
   faMinus,

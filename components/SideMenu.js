@@ -7,8 +7,8 @@ export default function SideMenu({ children }) {
 
   return (
     <nav className="side-nav side-nav--simple">
-      <a href="" className="intro-x flex items-center pl-2 pt-4">
-        <img className="w-14 h-5" src="/logo.png"></img>
+      <a href="" className="intro-x flex items-center pl-6 pt-4">
+        <FontAwesomeIcon icon="book-open" size="lg" />{" "}
       </a>
       <div className="side-nav__devider my-6"></div>
       <ul>
