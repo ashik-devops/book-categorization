@@ -1,7 +1,15 @@
 node_modules
-package-lock.json
+# Keep environment variables out of version control
 .env
-yarn.lock
-package-lock.json
-.DS_Store
+.env-dev
 .next
+prisma/migrations
+.git
+package-lock.json
+uploads
+test.js
+yarn.lock
+.DS_Store
+components/.DS_Store
+yarn-error.log
+public/downloads/*
