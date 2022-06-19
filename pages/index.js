@@ -12,34 +12,20 @@ import {
   loadingActionCreator,
 } from "../store/action-creators";
 import { Can } from "../lib/Authentication";
+import { allowedFileTypes } from "../../../constants/FileUploader";
 
 export default function Dashboard() {
   const authData = useSelector((state) => state.account);
   const router = useRouter();
   const dispatch = useDispatch();
+  const [labFileProgress, setLabFileProgress] = useState({
+    total: 0,
+    current: 0,
+    failed: 0,
+    width: 0,
+    visibility: "hidden",
+  });
 
-  // daily case load by a customer  end
-
-  // const loadUploadedCasesByCustomer = useCallback(() => {
-  //   const apiClient = ApiClient(authData);
-  //   apiClient
-  //     .post("/api/charts/uploadCasesByCustomer", {
-  //       filter: filters.monthlyCustomer,
-  //     })
-  //     .then((response) => {
-  //       if (response.status === 200) {
-  //         setUploaded(response.data.responseData.caseCount);
-  //         setTopCustomersUploaded(response.data.responseData.topCustomers);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       if (error.response && error.response.status === 403) {
-  //         //unauthorized
-  //         //dispatch(accountActionCreators.logout());
-  //         //router.push("/login");
-  //       }
-  //     });
-  // }, [authData, dispatch, router, filters]);
   const [labReport, setLabReport] = useState({
     state: "ready",
     fileToUpload: null,
@@ -54,6 +40,89 @@ export default function Dashboard() {
     error: null,
     success: null,
   });
+  async function uploadLabReport(caseId) {
+    const authenticated = withAuth(authData);
+    if (!authenticated) {
+      return router.push("/login");
+    }
+    let total = labReport.fileToUpload.length;
+    let done = 0;
+    let failed = 0;
+    if (labReport.fileToUpload) {
+      labReport.fileToUpload.map((file, index) => {
+        setLabReport({ ...labReport, state: "uploading" });
+
+        let formData = new FormData();
+
+        formData.append("uploadable_file", file);
+        apiClient
+          .post("/api/cases/files/labReport/" + caseId, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((res) => {
+            done++;
+
+            if (res.status === 201) {
+              loadLabReport();
+              if (labReport.fileToUpload.length !== done) {
+                setLabFileProgress({
+                  ...labFileProgress,
+                  current: done,
+                  total: labReport.fileToUpload.length,
+                  visibility: "",
+                });
+              }
+
+              if (labReport.fileToUpload.length == done) {
+                setLabReport({
+                  ...labReport,
+                  fileToUpload: null,
+                  success: "File has been uploaded",
+                  error: null,
+                  state: "ready",
+                });
+                setTimeout(
+                  () =>
+                    setLabFileProgress({
+                      ...labFileProgress,
+
+                      visibility: "hidden",
+                    }),
+                  3000
+                );
+              }
+            }
+            setDone(done);
+          })
+          .catch((error) => {
+            failed++;
+            if (labReport.fileToUpload.length - 1 == index) {
+              setLabReport({
+                ...labReport,
+                success: null,
+                error: "Failed to upload " + failed + " file",
+              });
+            }
+            setFailed(failed);
+          })
+          .finally(() => {
+            setTimeout(
+              () =>
+                setLabReport({
+                  ...labReport,
+                  success: null,
+                  error: null,
+                }),
+              3000
+            );
+          });
+
+        setTotal(total);
+      });
+    }
+  }
 
   useEffect(() => {
     const authenticated = withAuth(authData);
