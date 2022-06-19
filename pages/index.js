@@ -5,13 +5,10 @@ import ApiClient from "../lib/ApiClient";
 import withAuth from "../middlewares/auth";
 import { useSelector, useDispatch } from "react-redux";
 import Link from "next/link";
+import classNames from "classnames";
 
 import moment from "moment";
-import {
-  accountActionCreators,
-  loadingActionCreator,
-} from "../store/action-creators";
-import { Can } from "../lib/Authentication";
+
 import { allowedFileTypes } from "../constants/FileUploader";
 
 export default function Dashboard() {
@@ -25,6 +22,7 @@ export default function Dashboard() {
     width: 0,
     visibility: "hidden",
   });
+  const [failed, setFailed] = useState(0);
 
   const [labReport, setLabReport] = useState({
     state: "ready",
@@ -33,6 +31,7 @@ export default function Dashboard() {
     success: null,
   });
   const [caseFiles, setCaseFiles] = useState([]);
+  const apiClient = ApiClient(authData);
   const [labReports, setLabreports] = useState([]);
   const [fileUpload, setFileUpload] = useState({
     state: "ready",
@@ -40,7 +39,7 @@ export default function Dashboard() {
     error: null,
     success: null,
   });
-  async function uploadLabReport(caseId) {
+  async function uploadLabReport() {
     const authenticated = withAuth(authData);
     if (!authenticated) {
       return router.push("/login");
@@ -56,7 +55,7 @@ export default function Dashboard() {
 
         formData.append("uploadable_file", file);
         apiClient
-          .post("/api/cases/files/labReport/" + caseId, formData, {
+          .post("/api/files/create/", formData, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -65,7 +64,6 @@ export default function Dashboard() {
             done++;
 
             if (res.status === 201) {
-              loadLabReport();
               if (labReport.fileToUpload.length !== done) {
                 setLabFileProgress({
                   ...labFileProgress,
@@ -94,7 +92,6 @@ export default function Dashboard() {
                 );
               }
             }
-            setDone(done);
           })
           .catch((error) => {
             failed++;
@@ -118,8 +115,6 @@ export default function Dashboard() {
               3000
             );
           });
-
-        setTotal(total);
       });
     }
   }
@@ -207,14 +202,9 @@ export default function Dashboard() {
             <div
               className="progress-bar bg-theme-9 rounded"
               role="progressbar"
-              style={{
-                width: ((done + failed) * 100) / total + "%",
-              }}
             ></div>
           </div>
-          <div classnames="p-2" hidden={`${labFileProgress.visibility}`}>
-            {done} uploaded and {failed} failed from {total}{" "}
-          </div>
+
           <input
             type="file"
             multiple
@@ -252,7 +242,7 @@ export default function Dashboard() {
               })}
               onClick={(e) => {
                 if (labReport.fileToUpload) {
-                  uploadLabReport(patientCase.id);
+                  uploadLabReport();
                 } else {
                   setLabReport({
                     ...labReport,
