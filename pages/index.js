@@ -12,7 +12,7 @@ import {
   loadingActionCreator,
 } from "../store/action-creators";
 import { Can } from "../lib/Authentication";
-import { allowedFileTypes } from "../../../constants/FileUploader";
+import { allowedFileTypes } from "../constants/FileUploader";
 
 export default function Dashboard() {
   const authData = useSelector((state) => state.account);
