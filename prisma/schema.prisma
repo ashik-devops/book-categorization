@@ -24,6 +24,7 @@ model User {
   tokens       Token[]
   role_id      String        @db.Uuid
   role         Role          @relation(fields: [role_id], references: [id])
+  Files        Files[]
 }
 enum UserStatus {
   ACTIVE
@@ -64,4 +65,16 @@ model RolePermissions {
   assigned_at   DateTime   @default(dbgenerated("CURRENT_TIMESTAMP"))
 
   @@id([role_id, permission_id])
+}
+model Files {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name       String    @db.VarChar(512)
+  filepath   String    @unique @db.Text
+  created_at DateTime  @default(dbgenerated("CURRENT_TIMESTAMP"))
+  deleted_at DateTime?
+  user_id    String?   @db.Uuid
+  created_by User?     @relation(fields: [user_id], references: [id])
+  obj_type   String?   @db.VarChar(1024)
+  obj_id     String?   @db.Uuid
+  file_type  String?   @db.VarChar(64)
 }
