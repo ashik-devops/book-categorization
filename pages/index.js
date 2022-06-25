@@ -15,6 +15,7 @@ export default function Dashboard() {
   const authData = useSelector((state) => state.account);
   const router = useRouter();
   const dispatch = useDispatch();
+  const [files, setFiles] = useState([]);
   const [labFileProgress, setLabFileProgress] = useState({
     total: 0,
     current: 0,
@@ -30,15 +31,8 @@ export default function Dashboard() {
     error: null,
     success: null,
   });
-  const [caseFiles, setCaseFiles] = useState([]);
   const apiClient = ApiClient(authData);
   const [labReports, setLabreports] = useState([]);
-  const [fileUpload, setFileUpload] = useState({
-    state: "ready",
-    fileToUpload: null,
-    error: null,
-    success: null,
-  });
   async function uploadLabReport() {
     const authenticated = withAuth(authData);
     if (!authenticated) {
@@ -118,21 +112,36 @@ export default function Dashboard() {
       });
     }
   }
+  const loadBooks = useCallback(async () => {
+    apiClient
+      .get("/api/files/loadBooks")
+      .then((response) => {
+        if (response.status === 200) {
+          setFiles(response.data.responseData.files);
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 403) {
+          console.log(error);
+          dispatch(accountActionCreators.logout());
+          router.push("/login");
+        }
+      });
+  }, [apiClient, dispatch, router]);
 
   useEffect(() => {
     const authenticated = withAuth(authData);
     if (!authenticated) {
       router.push("/login");
     }
-  }, [router, authData]);
+    loadBooks();
+  }, [router, authData, loadBooks]);
 
   return (
     <Page>
       <h2 className="block text-lg font-medium mt-4">Please Upload the Book</h2>
       <div className=" box tab-content mt-4 p-4">
-        <h2 className="block text-lg font-medium mt-4">
-          Lab Report &amp; Other Files
-        </h2>
+        <h2 className="block text-lg font-medium mt-4"></h2>
         <div className=" box tab-content mt-4 p-4">
           {(() => {
             // console.log(labReports);
@@ -256,7 +265,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-      <h2 className="block text-lg font-medium mt-4">Book List</h2>
+      <h2 className="block text-lg font-medium mt-4">Uploaded Book List</h2>
       <table className="table border mt-4">
         <thead>
           <tr className="border">
@@ -266,17 +275,24 @@ export default function Dashboard() {
           </tr>
         </thead>
         <tbody>
-          <tr className="border">
-            <td className="border">No Data</td>
-            <td className="border">No Data</td>
-            <td className="border">
-              <button className="btn btn-success">
-                <Link href="/book/23">
-                  <a>View</a>
-                </Link>
-              </button>
-            </td>
-          </tr>
+          {files.length > 0 &&
+            files.map((value, index) => {
+              return (
+                <>
+                  <tr className="border">
+                    <td className="border">{++index}</td>
+                    <td className="border">{value.name.split(".")[0]}</td>
+                    <td className="border">
+                      <button className="btn btn-success">
+                        <Link href="/book/23">
+                          <a>View</a>
+                        </Link>
+                      </button>
+                    </td>
+                  </tr>
+                </>
+              );
+            })}
         </tbody>
       </table>
     </Page>

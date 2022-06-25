@@ -6,6 +6,7 @@ import {
   saveUploadedFile,
   validateUploadedFile,
 } from "../../../lib/FileUploader";
+import PdfParse from "pdf-parse";
 // first we need to disable the default body parser
 export const config = {
   api: {
@@ -18,7 +19,6 @@ export default async function handler(req, res) {
   if (_authUser) {
     const form = new IncomingForm();
     form.keepExtensions = true;
-    console.log(form);
 
     return form.parse(req, async (err, fields, files) => {
       if (err) {
@@ -38,8 +38,10 @@ export default async function handler(req, res) {
           }
         );
         if (uploadedFile) {
-          return ApiResponse(res, { file: uploadedFile }, 201);
+          const files = await prisma.files.findMany();
+          return ApiResponse(res, { files: files }, 201);
         } else {
+          console.log(error);
           return ApiResponse(res, { error: "failed to save" }, 400);
         }
       }

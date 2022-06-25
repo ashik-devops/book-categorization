@@ -16,6 +16,7 @@ export default function Dashboard() {
   const authData = useSelector((state) => state.account);
   const router = useRouter();
   const dispatch = useDispatch();
+  const apiClient = ApiClient(authData);
 
   // daily case load by a customer  end
 
@@ -45,7 +46,8 @@ export default function Dashboard() {
     if (!authenticated) {
       router.push("/login");
     }
-  }, [router, authData]);
+    loadBooks();
+  }, [router, authData, loadBooks]);
 
   return (
     <Page>

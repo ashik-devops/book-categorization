@@ -1,21 +1,4 @@
-export const allowedFileTypes = [
-  "jpg",
-  "jpeg",
-  "png",
-  "stl",
-  "mp4",
-  "iiwgl",
-  "pdf",
-  "csv",
-  "xls",
-  "xlsx",
-  "doc",
-  "docx",
-  "prg",
-  "pts",
-  "zip",
-  "rar",
-];
+export const allowedFileTypes = ["txt", "pdf", "doc", "docx"];
 
 export const allowedMimeTypes = [
   "image/jpeg",
