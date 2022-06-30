@@ -68,6 +68,7 @@ export default function Dashboard() {
               }
 
               if (labReport.fileToUpload.length == done) {
+                setFiles(res.data.responseData.files);
                 setLabReport({
                   ...labReport,
                   fileToUpload: null,
@@ -284,7 +285,7 @@ export default function Dashboard() {
                     <td className="border">{value.name.split(".")[0]}</td>
                     <td className="border">
                       <button className="btn btn-success">
-                        <Link href="/book/23">
+                        <Link href={`/book/${value.id}`} passHref={true}>
                           <a>View</a>
                         </Link>
                       </button>

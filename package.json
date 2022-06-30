@@ -34,6 +34,7 @@
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.34",
     "next": "12.1.6",
+    "occurences": "^2.2.2",
     "pdf-parse": "^1.1.1",
     "react": "18.1.0",
     "react-dom": "18.1.0",
@@ -42,7 +43,12 @@
     "redux": "^4.1.1",
     "redux-devtools-extension": "^2.13.9",
     "redux-persist": "^6.0.0",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "sentiment": "^5.0.2",
+    "textmining": "^1.0.3",
+    "chart.js": "^3.7.0",
+    "chartjs-plugin-datalabels": "^2.0.0",
+    "react-chartjs-2": "^4.0.0"
   },
   "devDependencies": {
     "eslint": "8.15.0",

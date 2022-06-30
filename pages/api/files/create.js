@@ -6,7 +6,7 @@ import {
   saveUploadedFile,
   validateUploadedFile,
 } from "../../../lib/FileUploader";
-import PdfParse from "pdf-parse";
+
 // first we need to disable the default body parser
 export const config = {
   api: {

@@ -4,6 +4,7 @@ import { useRouter } from "next/dist/client/router";
 import ApiClient from "../../lib/ApiClient";
 import withAuth from "../../middlewares/auth";
 import { useSelector, useDispatch } from "react-redux";
+import Radar from "../../components/Radar";
 
 import moment from "moment";
 import {
@@ -18,42 +19,48 @@ export default function Dashboard() {
   const dispatch = useDispatch();
   const apiClient = ApiClient(authData);
 
-  // daily case load by a customer  end
-
-  // const loadUploadedCasesByCustomer = useCallback(() => {
-  //   const apiClient = ApiClient(authData);
-  //   apiClient
-  //     .post("/api/charts/uploadCasesByCustomer", {
-  //       filter: filters.monthlyCustomer,
-  //     })
-  //     .then((response) => {
-  //       if (response.status === 200) {
-  //         setUploaded(response.data.responseData.caseCount);
-  //         setTopCustomersUploaded(response.data.responseData.topCustomers);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       if (error.response && error.response.status === 403) {
-  //         //unauthorized
-  //         //dispatch(accountActionCreators.logout());
-  //         //router.push("/login");
-  //       }
-  //     });
-  // }, [authData, dispatch, router, filters]);
+  const loadFile = useCallback(() => {
+    const apiClient = ApiClient(authData);
+    apiClient
+      .get("/api/files/" + router.query.id)
+      .then((response) => {
+        if (response.status === 200) {
+          console.log(response.data.responseData);
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 403) {
+        }
+      });
+  }, [authData, dispatch, router, loadFile]);
 
   useEffect(() => {
     const authenticated = withAuth(authData);
     if (!authenticated) {
       router.push("/login");
     }
-    loadBooks();
-  }, [router, authData, loadBooks]);
+    loadFile();
+  }, [router, authData, loadFile]);
 
   return (
     <Page>
       <h2 className="block text-lg font-medium mt-4">
         Result after text analysis
       </h2>
+
+      <div className="col-span-6 mt-8 text-center">
+        <div className="p-2">
+          <label htmlFor="crud-form-1" className="form-label text-lg">
+            Monthly Total 3D simulation Vs. Confirmed Cases
+          </label>
+        </div>
+        <Radar
+          heading={""}
+          title={"Label"}
+          uploaded={uploaded}
+          confirmed={confirmed}
+        />
+      </div>
     </Page>
   );
 }
