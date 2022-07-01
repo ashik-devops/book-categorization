@@ -1,7 +1,7 @@
 const permissions = [
   {
-    name: "*",
-    entity: "*",
+    name: "view",
+    entity: "book",
   },
 ];
 
@@ -10,8 +10,8 @@ const roles = [
     label: "Superadmin",
     permissions: [
       {
-        name: "+",
-        entity: "+",
+        name: "*",
+        entity: "*",
       },
       ...permissions,
     ],

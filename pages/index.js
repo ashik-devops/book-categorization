@@ -52,11 +52,12 @@ export default function Dashboard() {
         let formData = new FormData();
 
         formData.append("uploadable_file", file);
-        // formData.append("bookType", labReport.bookType);
+        formData.append("bookType", labReport.bookType);
         apiClient
           .post("/api/files/create/", formData, {
             headers: {
               "Content-Type": "multipart/form-data",
+              bookType: labReport.bookType,
             },
           })
           .then((res) => {
@@ -254,7 +255,7 @@ export default function Dashboard() {
               });
             }}
           />
-          {Can(authData.token, "+", "+") &&
+          {Can(authData.token, "*", "*") &&
             (() => {
               return (
                 <select

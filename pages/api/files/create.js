@@ -20,11 +20,12 @@ export default async function handler(req, res) {
     const form = new IncomingForm();
     form.keepExtensions = true;
 
-    return form.parse(req, async (err, fields, files) => {
+    return form.parse(req, async (err, fields, files, bookType) => {
       if (err) {
         return ApiResponse(res, { error: "error" }, 500);
       }
       if (files.uploadable_file) {
+        console.log(req.headers.booktype);
         let uploadedFile = await saveUploadedFile(
           files.uploadable_file,
           "case_files/",
@@ -35,6 +36,7 @@ export default async function handler(req, res) {
                 id: _authUser.id,
               },
             },
+            training_genre: req.headers.booktype,
           }
         );
         if (uploadedFile) {

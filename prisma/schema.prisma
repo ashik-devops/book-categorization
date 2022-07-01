@@ -77,4 +77,5 @@ model Files {
   obj_type   String?   @db.VarChar(1024)
   obj_id     String?   @db.Uuid
   file_type  String?   @db.VarChar(64)
+  training_genre   String?   @db.VarChar(64)
 }
