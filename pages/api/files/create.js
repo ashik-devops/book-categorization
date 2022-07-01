@@ -36,7 +36,7 @@ export default async function handler(req, res) {
                 id: _authUser.id,
               },
             },
-            training_genre: req.headers.booktype,
+            file_type: req.headers.booktype,
           }
         );
         if (uploadedFile) {
