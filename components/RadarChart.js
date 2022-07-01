@@ -4,9 +4,10 @@ import { Chart } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 Chart.register(ChartDataLabels);
 
-export default function Radar({ heading, sentiments }) {
+export default function RadarChart({ heading, sentiments }) {
   let radarData = [];
   let radarLabels = [];
+  let radarBackground = [];
   function generateRandomColorRgb() {
     const red = Math.floor(Math.random() * 256);
     const green = Math.floor(Math.random() * 256);
@@ -16,18 +17,21 @@ export default function Radar({ heading, sentiments }) {
 
   if (sentiments) {
     sentiments.map((value) => {
-      barData.push(value.number);
-      barLabels.push(value.value);
-      barBackground.push(generateRandomColorRgb());
+      radarData.push(value.number);
+      radarLabels.push(value.value);
+      radarBackground.push(generateRandomColorRgb());
     });
   }
   const data = {
-    labels: barLabels,
+    labels: radarLabels,
 
     datasets: [
       {
-        data: barData,
-        backgroundColor: barBackground,
+        label: "Number of Sentiments",
+        data: radarData,
+        backgroundColor: "rgba(255, 99, 132, 0.2)",
+        borderColor: "rgba(255, 99, 132, 1)",
+        borderWidth: 1,
       },
     ],
   };
@@ -35,31 +39,12 @@ export default function Radar({ heading, sentiments }) {
   return (
     <div className="flex flex-col items-center text-center">
       <h2 className=" text-lg mt-8">{heading}</h2>
-      <div className="mt-3">
+      <div className="mt-3" style={{ height: 600, width: 600 }}>
         <Radar
           data={data}
           options={{
-            plugins: {
-              datalabels: {
-                backgroundColor: function (context) {
-                  return context.dataset.backgroundColor;
-                },
-                borderColor: "white",
-                borderRadius: 5,
-                borderWidth: 1,
-                color: "white",
-                font: {
-                  weight: "bold",
-                },
-                padding: 6,
-              },
-
-              legend: {
-                display: false,
-              },
-            },
-
-            radius: 140,
+            responsive: true,
+            maintainAspectRatio: false,
           }}
         />
       </div>

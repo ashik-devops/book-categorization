@@ -4,7 +4,8 @@ import { useRouter } from "next/dist/client/router";
 import ApiClient from "../../lib/ApiClient";
 import withAuth from "../../middlewares/auth";
 import { useSelector, useDispatch } from "react-redux";
-import Radar from "../../components/Radar";
+import RadarChart from "../../components/RadarChart";
+import Classifier from "ml-classify-text";
 
 import moment from "moment";
 import {
@@ -18,6 +19,8 @@ export default function Dashboard() {
   const router = useRouter();
   const dispatch = useDispatch();
   const apiClient = ApiClient(authData);
+  const [positive, setPositive] = useState();
+  const [negative, setNegative] = useState();
 
   const loadFile = useCallback(() => {
     const apiClient = ApiClient(authData);
@@ -25,7 +28,8 @@ export default function Dashboard() {
       .get("/api/files/" + router.query.id)
       .then((response) => {
         if (response.status === 200) {
-          console.log(response.data.responseData);
+          setPositive(response.data.responseData[0]);
+          setNegative(response.data.responseData[1]);
         }
       })
       .catch((error) => {
@@ -48,18 +52,14 @@ export default function Dashboard() {
         Result after text analysis
       </h2>
 
-      <div className="col-span-6 mt-8 text-center">
-        <div className="p-2">
-          <label htmlFor="crud-form-1" className="form-label text-lg">
-            Monthly Total 3D simulation Vs. Confirmed Cases
-          </label>
+      <div className="grid grid-cols-12 gap-6">
+        <div className="col-span-6 mt-8 text-center">
+          <RadarChart heading="Positive Sentiments" sentiments={positive} />
         </div>
-        <Radar
-          heading={""}
-          title={"Label"}
-          uploaded={uploaded}
-          confirmed={confirmed}
-        />
+        <div className="col-span-6 mt-8 text-center">
+          <div className="p-2"></div>
+          <RadarChart heading="Negative Sentiments" sentiments={negative} />
+        </div>
       </div>
     </Page>
   );

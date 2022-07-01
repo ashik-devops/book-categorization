@@ -7,7 +7,7 @@ const pdf = require("pdf-parse");
 const fs = require("fs");
 let tm = require("textmining");
 const occurences = require("occurences");
-export default async function handler(req, res) {
+export default async function handler(req, res, next) {
   const _authUser = await withAuth(req, res);
   if (_authUser) {
     let result = null;
@@ -20,28 +20,23 @@ export default async function handler(req, res) {
     });
     let newPath = process.cwd() + file.filepath;
     let dataBuffer = fs.readFileSync(newPath);
+    let occuredMix = [];
     let occuredPositive = null;
-    var nn;
+    let occuredNegative = null;
 
-    pdf(dataBuffer).then(function (data) {
-      aa(data);
-
-      // console.log(occuredPositive.getSorted());
-      // console.log(occuredNegative.getSorted());
-    });
-    function aa(data) {
+    const pdfData = pdf(dataBuffer).then(function (data) {
       result = sentiment.analyze(data.text);
       occuredPositive = new Occurences(result.positive.join(" "));
-      return occuredPositive;
+      occuredNegative = new Occurences(result.negative.join(" "));
+      occuredMix.push(occuredPositive.getSorted().slice(0, 12));
+      occuredMix.push(occuredNegative.getSorted().slice(0, 12));
+      return occuredMix;
+    });
+
+    if (file) {
+      const resp = await Promise.resolve(pdfData);
+      return ApiResponse(res, occuredMix, 200);
     }
-    if (nn !== null || typeof nn !== "undefined") {
-      console.log(nn);
-    }
-    // if (file) {
-    //   let occuredPositive = new Occurences(result.positive.join(" "));
-    //   let occuredNegative = new Occurences(result.negative.join(" "));
-    return ApiResponse(res, "occuredPositive.getSorted().slice(0, 12)", 200);
-    // }
 
     return ApiResponse(res, { error: "error" }, 404);
   }
