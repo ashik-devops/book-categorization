@@ -30,6 +30,7 @@ export default async function handler(req, res, next) {
       occuredNegative = new Occurences(result.negative.join(" "));
       occuredMix.push(occuredPositive.getSorted().slice(0, 12));
       occuredMix.push(occuredNegative.getSorted().slice(0, 12));
+      occuredMix.push(data.text);
       return occuredMix;
     });
 

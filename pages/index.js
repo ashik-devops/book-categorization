@@ -280,7 +280,7 @@ export default function Dashboard() {
             files.map((value, index) => {
               return (
                 <>
-                  <tr className="border">
+                  <tr key={index} className="border">
                     <td className="border">{++index}</td>
                     <td className="border">{value.name.split(".")[0]}</td>
                     <td className="border">
