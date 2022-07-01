@@ -322,9 +322,6 @@ export default function Dashboard() {
                           <a>View</a>
                         </Link>
                       </button>
-                      <button className="btn btn-warning ml-4">
-                        <a onClick={predictBook}>{predict}</a>
-                      </button>
                     </td>
                   </tr>
                 </>
