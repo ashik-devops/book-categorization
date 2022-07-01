@@ -8,6 +8,16 @@ const permissions = [
 const roles = [
   {
     label: "Superadmin",
+    permissions: [
+      {
+        name: "+",
+        entity: "+",
+      },
+      ...permissions,
+    ],
+  },
+  {
+    label: "Admin",
     permissions: permissions,
   },
 ];

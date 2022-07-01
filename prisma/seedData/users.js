@@ -6,7 +6,15 @@ let users = [
     first_name: "Ashik",
     last_name: "Mahmud",
     role: "Superadmin",
-    password: "ashik94",
+    password: "ashik123",
+    created_at: moment().toISOString(),
+  },
+  {
+    email: "ruhi@gmail.com",
+    first_name: "Ashik",
+    last_name: "Mahmud",
+    role: "Admin",
+    password: "ruhi123",
     created_at: moment().toISOString(),
   },
 ];

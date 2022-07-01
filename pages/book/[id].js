@@ -5,7 +5,6 @@ import ApiClient from "../../lib/ApiClient";
 import withAuth from "../../middlewares/auth";
 import { useSelector, useDispatch } from "react-redux";
 import RadarChart from "../../components/RadarChart";
-import Classifier from "ml-classify-text";
 
 import moment from "moment";
 import {
