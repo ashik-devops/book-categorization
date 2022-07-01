@@ -6,6 +6,7 @@ import withAuth from "../middlewares/auth";
 import { useSelector, useDispatch } from "react-redux";
 import Link from "next/link";
 import classNames from "classnames";
+import { Can } from "../lib/Authentication";
 
 import moment from "moment";
 
@@ -16,6 +17,8 @@ export default function Dashboard() {
   const router = useRouter();
   const dispatch = useDispatch();
   const [files, setFiles] = useState([]);
+  const [predict, setPredict] = useState("Predict");
+
   const [labFileProgress, setLabFileProgress] = useState({
     total: 0,
     current: 0,
@@ -30,6 +33,7 @@ export default function Dashboard() {
     fileToUpload: null,
     error: null,
     success: null,
+    bookType: null,
   });
   const apiClient = ApiClient(authData);
   const [labReports, setLabreports] = useState([]);
@@ -48,6 +52,7 @@ export default function Dashboard() {
         let formData = new FormData();
 
         formData.append("uploadable_file", file);
+        // formData.append("bookType", labReport.bookType);
         apiClient
           .post("/api/files/create/", formData, {
             headers: {
@@ -112,6 +117,13 @@ export default function Dashboard() {
           });
       });
     }
+  }
+  function predictBook() {
+    console.log("predicti");
+    setPredict("Predicting...");
+    setTimeout(() => {
+      setPredict("Predict");
+    }, "3000");
   }
   const loadBooks = useCallback(async () => {
     apiClient
@@ -242,6 +254,26 @@ export default function Dashboard() {
               });
             }}
           />
+          {Can(authData.token, "+", "+") &&
+            (() => {
+              return (
+                <select
+                  className="form-control  form-select form-select w-full relative mx-auto"
+                  onChange={(el) => {
+                    setLabReport({
+                      ...labReport,
+                      bookType: el.target.value,
+                    });
+                  }}
+                >
+                  <option value="">Select...</option>
+                  <option value="Romantic">Romantic</option>
+                  <option value="Horror">Horror</option>
+                  <option value="Other">Other</option>
+                </select>
+              );
+            })()}
+
           <div>
             <button
               disabled={labReport.state == "uploading"}
@@ -288,6 +320,9 @@ export default function Dashboard() {
                         <Link href={`/book/${value.id}`} passHref={true}>
                           <a>View</a>
                         </Link>
+                      </button>
+                      <button className="btn btn-warning ml-4">
+                        <a onClick={predictBook}>{predict}</a>
                       </button>
                     </td>
                   </tr>
